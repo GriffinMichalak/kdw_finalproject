@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Image Quiz</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul class="nav-list">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="info.html">Info</a></li>
+    </ul>
+  </nav>
+
+  <br><br><br><br><br>
+  <div class="quiz-container" id="quiz-container">
+    <header>
+      <h1>Quiz: Is it AI?</h1>
+      <p class="description">Test your ability to identify AI-generated images</p>
+    </header>
+    <div id="image-container">
+      <img id="quiz-image" src="" alt="Quiz Image">
+    </div>
+    <div class="buttons">
+      <button id="ai-button" class="quiz-button">AI</button>
+      <button id="not-ai-button" class="quiz-button">Not AI</button>
+    </div>
+    <div id="feedback"></div>
+    <button id="next-button" class="next-button" style="display: none;">Next</button>
+  </div>
+
+  <div class="progress-container">
+    <p id="progress-indicator">Question 1 of 20</p>
+  </div>
+
+  <footer>
+    <p>Made with ❤️ for fun and learning.</p>
+  </footer>
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="index.css">
+</body>
+</html>
+
+<script>
+  // Quiz Data Array
+  const quizData = [
+    { image: 'images//ai/ai_1.jpg', isAI: true },
+    { image: 'images/ai/ai_2.jpg', isAI: true },
+    { image: 'images/ai/ai_3.jpg', isAI: true },
+    { image: 'images/ai/ai_4.jpg', isAI: true },
+    { image: 'images/ai/ai_5.jpg', isAI: true },
+    { image: 'images/ai/ai_6.jpg', isAI: true },
+    { image: 'images/ai/ai_7.jpg', isAI: true },
+    { image: 'images/ai/ai_8.jpg', isAI: true },
+    { image: 'images/ai/ai_9.jpg', isAI: true },
+    { image: 'images/ai/ai_10.jpg', isAI: true },
+
+    { image: 'images/real/real_1.jpg', isAI: false },
+    { image: 'images/real/real_2.jpg', isAI: false },
+    { image: 'images/real/real_3.jpg', isAI: false },
+    { image: 'images/real/real_4.jpg', isAI: false },
+    { image: 'images/real/real_5.jpg', isAI: false },
+    { image: 'images/real/real_6.jpg', isAI: false },
+    { image: 'images/real/real_7.jpg', isAI: false },
+    { image: 'images/real/real_8.jpg', isAI: false },
+    { image: 'images/real/real_9.jpg', isAI: false },
+    { image: 'images/real/real_10.jpg', isAI: false },
+  ];
+
+  shuffleArray(quizData);
+
+  let currentQuestion = 0;
+  let score = 0;
+
+  // DOM Elements
+  const quizImage = document.getElementById('quiz-image');
+  const aiButton = document.getElementById('ai-button');
+  const notAiButton = document.getElementById('not-ai-button');
+  const feedback = document.getElementById('feedback');
+
+  // Load the first image
+  loadImage();
+
+  // Event Listeners
+  aiButton.addEventListener('click', () => handleAnswer(true));
+  notAiButton.addEventListener('click', () => handleAnswer(false));
+
+  function loadImage() {
+    const currentData = quizData[currentQuestion];
+    quizImage.src = currentData.image;
+
+    // Reset UI for the new question
+    aiButton.disabled = false;
+    notAiButton.disabled = false;
+
+    // Clear previous button states
+    aiButton.classList.remove('correct', 'incorrect');
+    notAiButton.classList.remove('correct', 'incorrect');
+    feedback.textContent = '';
+    feedback.className = '';
+
+    // Update progress indicator
+    const progressIndicator = document.getElementById('progress-indicator');
+    progressIndicator.textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+  }
+
+  function handleAnswer(answer) {
+    const correctAnswer = quizData[currentQuestion].isAI;
+
+    // Update score silently
+    if (answer === correctAnswer) {
+      score++;
+    }
+
+    // Disable buttons for the current question
+    aiButton.disabled = true;
+    notAiButton.disabled = true;
+
+    // Brief delay before loading the next question or showing the final score
+    if (currentQuestion < quizData.length - 1) {
+      currentQuestion++;
+      loadImage();
+    } else {
+      showFinalScore();
+    }
+  }
+
+  function showFinalScore() {
+    // Hide the buttons and display the final score
+    aiButton.style.display = 'none';
+    notAiButton.style.display = 'none';
+    quizImage.style.display = 'none';
+
+    // Calculate the percentage score
+    const percentageScore = ((score / quizData.length) * 100).toFixed(2);
+
+    // Create a results container
+    const resultsContainer = document.createElement('div');
+    resultsContainer.className = 'results-container';
+
+    // Add the final score
+    const scoreText = document.createElement('p');
+    scoreText.textContent = `You scored ${score} out of ${quizData.length} (${percentageScore}%)`;
+    scoreText.className = 'final-score';
+    resultsContainer.appendChild(scoreText);
+
+    // Add the correct answers for each image
+    quizData.forEach((data, index) => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+
+        const image = document.createElement('img');
+        image.src = data.image;
+        image.alt = `Image ${index + 1}`;
+        image.className = 'result-image';
+
+        const answerText = document.createElement('p');
+        answerText.textContent = `Image ${index + 1}: ${data.isAI ? 'AI-Generated' : 'Not AI'}`;
+        answerText.className = 'answer-text';
+
+        resultItem.appendChild(image);
+        resultItem.appendChild(answerText);
+        resultsContainer.appendChild(resultItem);
+    });
+
+    // Append the results container to the feedback element
+    feedback.innerHTML = ''; // Clear previous content
+    feedback.appendChild(resultsContainer);
+    feedback.className = 'final-feedback';
+}
+
+  // Utility function to shuffle an array
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+</script>
+
+</body>
+</html>
+<!-- https://thesecatsdonotexist.com/ -->
+<!-- https://thispersondoesnotexist.com/ -->
+<!-- https://www.unrealperson.com/ -->
+<!-- https://unsplash.com/ -->
