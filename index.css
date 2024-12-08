@@ -242,3 +242,52 @@ body {
   .content a:hover {
     text-decoration: underline;
   }
+
+  .results-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .final-score {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 1rem;
+  }
+
+  .results-table thead tr {
+    background-color: #f4f4f4;
+  }
+
+  .results-table th,
+  .results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .results-table th {
+    font-weight: bold;
+  }
+
+  .result-image {
+    max-width: 100px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .correct-result {
+    color: green;
+    font-weight: bold;
+  }
+
+  .incorrect-result {
+    color: red;
+    font-weight: bold;
+  }

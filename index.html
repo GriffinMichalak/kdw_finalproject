@@ -74,6 +74,7 @@
 
   let currentQuestion = 0;
   let score = 0;
+  const userResponses = []; // Track user's answers
 
   // DOM Elements
   const quizImage = document.getElementById('quiz-image');
@@ -110,6 +111,15 @@
   function handleAnswer(answer) {
     const correctAnswer = quizData[currentQuestion].isAI;
 
+    // Record user response
+    userResponses.push({
+      question: currentQuestion + 1,
+      image: quizData[currentQuestion].image,
+      userAnswer: answer ? 'AI' : 'Not AI',
+      correctAnswer: correctAnswer ? 'AI' : 'Not AI',
+      isCorrect: answer === correctAnswer
+    });
+
     // Update score silently
     if (answer === correctAnswer) {
       score++;
@@ -129,10 +139,11 @@
   }
 
   function showFinalScore() {
-    // Hide the buttons and display the final score
+    // Hide the buttons and image container
     aiButton.style.display = 'none';
     notAiButton.style.display = 'none';
-    quizImage.style.display = 'none';
+    const imageContainer = document.getElementById('image-container');
+    imageContainer.style.display = 'none';
 
     // Calculate the percentage score
     const percentageScore = ((score / quizData.length) * 100).toFixed(2);
@@ -147,30 +158,59 @@
     scoreText.className = 'final-score';
     resultsContainer.appendChild(scoreText);
 
-    // Add the correct answers for each image
-    quizData.forEach((data, index) => {
-        const resultItem = document.createElement('div');
-        resultItem.className = 'result-item';
+    // Create a table for results
+    const resultsTable = document.createElement('table');
+    resultsTable.className = 'results-table';
 
-        const image = document.createElement('img');
-        image.src = data.image;
-        image.alt = `Image ${index + 1}`;
-        image.className = 'result-image';
+    // Add table header
+    const tableHeader = `
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Your Answer</th>
+          <th>Correct Answer</th>
+          <th>Result</th>
+        </tr>
+      </thead>`;
+    resultsTable.innerHTML = tableHeader;
 
-        const answerText = document.createElement('p');
-        answerText.textContent = `Image ${index + 1}: ${data.isAI ? 'AI-Generated' : 'Not AI'}`;
-        answerText.className = 'answer-text';
+    // Add table body with user responses
+    const tableBody = document.createElement('tbody');
+    userResponses.forEach((response, index) => {
+      const row = document.createElement('tr');
 
-        resultItem.appendChild(image);
-        resultItem.appendChild(answerText);
-        resultsContainer.appendChild(resultItem);
+      const imageCell = document.createElement('td');
+      const image = document.createElement('img');
+      image.src = response.image;
+      image.alt = `Image ${index + 1}`;
+      image.className = 'result-image';
+      imageCell.appendChild(image);
+
+      const userAnswerCell = document.createElement('td');
+      userAnswerCell.textContent = response.userAnswer;
+
+      const correctAnswerCell = document.createElement('td');
+      correctAnswerCell.textContent = response.correctAnswer;
+
+      const resultCell = document.createElement('td');
+      resultCell.textContent = response.isCorrect ? 'Correct' : 'Incorrect';
+      resultCell.className = response.isCorrect ? 'correct-result' : 'incorrect-result';
+
+      row.appendChild(imageCell);
+      row.appendChild(userAnswerCell);
+      row.appendChild(correctAnswerCell);
+      row.appendChild(resultCell);
+      tableBody.appendChild(row);
     });
+
+    resultsTable.appendChild(tableBody);
+    resultsContainer.appendChild(resultsTable);
 
     // Append the results container to the feedback element
     feedback.innerHTML = ''; // Clear previous content
     feedback.appendChild(resultsContainer);
     feedback.className = 'final-feedback';
-}
+  }
 
   // Utility function to shuffle an array
   function shuffleArray(array) {
