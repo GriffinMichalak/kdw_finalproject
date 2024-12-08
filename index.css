@@ -291,3 +291,33 @@ body {
     color: red;
     font-weight: bold;
   }
+
+  /* citation */
+
+  .csl-bib-body {
+    margin-left: 2em;
+  }
+
+  .csl-entry {
+    text-indent: -2em;
+    margin-left: 2em;
+    margin-bottom: 1em;
+    line-height: 1.6;
+  }
+
+  .csl-entry i {
+    font-style: italic;
+  }
+
+  .csl-entry a {
+    color: #0056b3;
+    text-decoration: none;
+  }
+
+  .csl-entry a:hover {
+    text-decoration: underline;
+  }
+
+  .content {
+    text-align: left;
+  }
